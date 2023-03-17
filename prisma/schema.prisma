@@ -21,6 +21,7 @@ model User {
 model Community {
   id    Int    @id
   name  String
+  description String?
   posts Post[] @relation(name: "communityPosts")
 
   Post Post[] @relation(name: "postedIn")
