@@ -7,7 +7,8 @@ const prisma = new PrismaClient();
   {id: 2, title: "I'm getting tired of these lorem texts.", communityId: 1}
  */
 async function main() {
-  
+  const communities = await prisma.community.findMany();
+  console.log(communities)
 }
 
 export async function GET(request) {
