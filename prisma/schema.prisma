@@ -266,14 +266,14 @@ model users {
 }
 
 model admins {
+  entryId     String      @db.Uuid
   userId      String      @db.Uuid
   communityId String      @db.Uuid
   roleId      String      @db.Uuid
-  entryId     String      @id @db.Uuid
   communities communities @relation(fields: [communityId], references: [id], onDelete: NoAction, onUpdate: Restrict)
   roles       roles       @relation(fields: [roleId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  profiles    profiles    @relation(fields: [userId], references: [id], onDelete: NoAction, onUpdate: Restrict)
 
+  @@id([userId, entryId])
   @@schema("public")
 }
 
@@ -303,10 +303,10 @@ model communities {
 }
 
 model members {
+  entryId     String      @id @db.Uuid
   memberId    String      @db.Uuid
   communityId String      @db.Uuid
   joinDate    DateTime    @db.Date
-  entryId     String      @id @db.Uuid
   communities communities @relation(fields: [communityId], references: [id], onDelete: NoAction, onUpdate: Restrict)
   profiles    profiles    @relation(fields: [memberId], references: [id], onDelete: NoAction, onUpdate: Restrict)
 
@@ -331,7 +331,6 @@ model profiles {
   id           String     @id @db.Uuid
   username     String
   creationDate DateTime   @db.Date
-  admins       admins[]
   comments     comments[]
   members      members[]
   posts        posts[]
