@@ -1,34 +1,48 @@
-import './globals.css'
+import 'server-only';
+import Header from './components/Header';
+import './globals.css';
+import SupabaseProvider from './components/supabase-provider';
+import SupabaseListener from './components/supabase-listener';
+import { createServerComponentSupabaseClient } from '@supabase/auth-helpers-nextjs';
+import { headers, cookies } from 'next/headers';
 
 export const metadata = {
   title: 'CUtalkies',
-  description: 'Homepage Title',
+  description: 'Message board for CU students',
 }
 
-export default function RootLayout({ children }) {
+export default async function RootLayout({ children }) {
+  const supabase = createServerComponentSupabaseClient({
+    headers,
+    cookies
+  });
+
+  const { data: session } = await supabase.auth.getSession();
+  
   return (
     <html lang="en">
       <body>
-        <div>
-          <header>
-            <nav className='navbar bg-base-100'>
-              <a className='btn btn-ghost normal-case text-2xl'><span className='text-primary'>CU</span>talkies</a>
-            </nav>
-          </header>
+        <SupabaseProvider session={session}>
+          <SupabaseListener serverAccessToken={session.access_token} />
 
-          <main className='min-h-screen px-7'>
-            {children}
-          </main>
-
-        </div>
-
-
-        <footer className='footer footer-center p-3'>
           <div>
-            <p>Made with ❤<br />
-              By <a href='https://github.com/Aryan-Atom' className='link'>Aryan</a>, <a href='https://github.com/laughingclouds' className='link'>Hemant</a>, and <a href='https://github.com/vkrant09' className='link'>Vikrant</a></p>
+            <Header />
+
+            <main className='min-h-screen px-7'>
+              {children}
+            </main>
+
           </div>
-        </footer>
+
+          <footer className='footer footer-center p-3'>
+            <div>
+              <p>Made with ❤<br />
+                By <a href='https://github.com/Aryan-Atom' className='link'>Aryan</a>, <a href='https://github.com/laughingclouds' className='link'>Hemant</a>, and <a href='https://github.com/vkrant09' className='link'>Vikrant</a></p>
+            </div>
+          </footer>
+        </SupabaseProvider>
+
+
       </body>
     </html>
   )
